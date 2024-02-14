@@ -2,6 +2,11 @@ import 'package:bitcoin_ticker_flutter/coin_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:io' show Platform;
+import 'coin_data.dart';
+
+const apiKey = 'C3104D33-7A73-4A1A-8418-15B5D13B623C';
+const url = 'https://rest.coinapi.io/v1/exchangerate/BTC/';
+//BTC/USD?apikey=$apiKey
 
 class PriceScreen extends StatefulWidget {
   @override
@@ -10,6 +15,17 @@ class PriceScreen extends StatefulWidget {
 
 class _PriceScreenState extends State<PriceScreen> {
   String? selectedCurrency = 'USD';
+  String textMessage = '1 BTC = ? USD';
+
+  dynamic data;
+
+  // Getting data from the CoinApi
+  void getData() async {
+    CoinData coinData = CoinData();
+    String fullUrl = url + selectedCurrency! + '?apiKey=' + apiKey;
+    print(fullUrl);
+    data = await coinData.getCoinData(fullUrl);
+  }
 
   Widget androidDropDown() {
     List<DropdownMenuItem<String>> dropDownItems = [];
@@ -29,7 +45,7 @@ class _PriceScreenState extends State<PriceScreen> {
       onChanged: (String? value) {
         setState(() {
           selectedCurrency = value;
-          print(value);
+          updateUI(data);
         });
       },
     );
@@ -45,11 +61,33 @@ class _PriceScreenState extends State<PriceScreen> {
     return CupertinoPicker(
       backgroundColor: Colors.lightBlue,
       onSelectedItemChanged: (selectedIndex) {
-        print(selectedIndex);
+        selectedCurrency = currenciesList[selectedIndex];
+        print(selectedCurrency);
+        setState(() {
+          updateUI(data);
+        });
       },
       itemExtent: 32.0,
       children: pickerItems,
     );
+  }
+
+  void updateUI(dynamic coinApiResponse) {
+    setState(() {
+      if (coinApiResponse != null) {
+        double rate = coinApiResponse['rate'];
+        String formattedRate = rate.toStringAsFixed(2);
+        textMessage = '1 BTC = $formattedRate $selectedCurrency';
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getData();
+    updateUI(data);
   }
 
   @override
@@ -73,7 +111,7 @@ class _PriceScreenState extends State<PriceScreen> {
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
                 child: Text(
-                  '1 BTC = ? USD',
+                  textMessage,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 20.0,
