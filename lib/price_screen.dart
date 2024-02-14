@@ -25,6 +25,16 @@ class _PriceScreenState extends State<PriceScreen> {
     return dropDownItems;
   }
 
+  List<Text> getCupertioWidgets() {
+    List<Text> textsWidgets = [];
+
+    for (String currency in currenciesList) {
+      textsWidgets.add(Text(currency));
+    }
+
+    return textsWidgets;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,7 +77,7 @@ class _PriceScreenState extends State<PriceScreen> {
                 print(selectedIndex);
               },
               itemExtent: 32.0,
-              children: [Text('USD'), Text('MAD'), Text('PLN')],
+              children: getCupertioWidgets(),
             ),
           ),
         ],
