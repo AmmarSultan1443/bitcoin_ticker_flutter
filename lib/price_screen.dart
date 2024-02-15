@@ -15,17 +15,46 @@ class _PriceScreenState extends State<PriceScreen> {
   String selectedCurrency = 'AUD';
 
   String bitcoinValue = '?';
+  String ethValue = '?';
+  String lightCoinValue = '?';
 
   // Getting data from the CoinApi
-  void getData() async {
-    try {
-      double data = await CoinData().getCoinData(selectedCurrency);
+  void getData(String cryptoCurrency) async {
+    double data = 0.0;
 
-      setState(() {
-        bitcoinValue = data.toStringAsFixed(0);
-      });
-    } catch (e) {
-      print(e);
+    switch (cryptoCurrency) {
+      case 'BTC':
+        try {
+          data = await CoinData().getBitCoinData(selectedCurrency);
+          setState(() {
+            bitcoinValue = data.toStringAsFixed(0);
+          });
+        } catch (e) {
+          print(e);
+        }
+        break;
+
+      case 'ETH':
+        try {
+          data = await CoinData().getEthData(selectedCurrency);
+          setState(() {
+            ethValue = data.toStringAsFixed(0);
+          });
+        } catch (e) {
+          print(e);
+        }
+        break;
+
+      case 'LTC':
+        try {
+          data = await CoinData().getLightCoinData(selectedCurrency);
+          setState(() {
+            lightCoinValue = data.toStringAsFixed(0);
+          });
+        } catch (e) {
+          print(e);
+        }
+        break;
     }
   }
 
@@ -48,7 +77,7 @@ class _PriceScreenState extends State<PriceScreen> {
         setState(() {
           selectedCurrency = value!;
         });
-        getData();
+        getDataForAllCryptoCur();
       },
     );
   }
@@ -66,18 +95,27 @@ class _PriceScreenState extends State<PriceScreen> {
         setState(() {
           selectedCurrency = currenciesList[selectedIndex];
         });
-        getData();
+        getDataForAllCryptoCur();
       },
       itemExtent: 32.0,
       children: pickerItems,
     );
   }
 
+  void getDataForAllCryptoCur() {
+    // Get bitcon Data
+    getData('BTC');
+    // Get Ethereaum Data
+    getData('ETH');
+    // get LightCoin Data
+    getData('LTC');
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    getData();
+    getDataForAllCryptoCur();
   }
 
   @override
@@ -89,27 +127,78 @@ class _PriceScreenState extends State<PriceScreen> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
-            child: Card(
-              color: Colors.lightBlueAccent,
-              elevation: 5.0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
-                child: Text(
-                  '1 BTC = $bitcoinValue $selectedCurrency',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.white,
+        children: [
+          Expanded(
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
+                    child: Card(
+                      color: Colors.lightBlueAccent,
+                      elevation: 5.0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 15.0, horizontal: 28.0),
+                        child: Text(
+                          '1 BTC = $bitcoinValue $selectedCurrency',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
+                    child: Card(
+                      color: Colors.lightBlueAccent,
+                      elevation: 5.0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 15.0, horizontal: 28.0),
+                        child: Text(
+                          '1 ETH = $ethValue $selectedCurrency',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
+                    child: Card(
+                      color: Colors.lightBlueAccent,
+                      elevation: 5.0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 15.0, horizontal: 28.0),
+                        child: Text(
+                          '1 LTC = $lightCoinValue $selectedCurrency',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ]),
           ),
           Container(
               height: 150.0,

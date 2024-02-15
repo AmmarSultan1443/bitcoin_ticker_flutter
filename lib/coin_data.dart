@@ -32,11 +32,49 @@ const List<String> cryptoList = [
   'LTC',
 ];
 
-const apiKey = 'd0a3aa8f-08d2-481b-b0a6-05fced11808b';
+const apiKey = 'fdd8e34b-f586-40ea-b6c7-ec440f14905b';
 const coinAPIURL = 'https://rest.coinapi.io/v1/exchangerate';
 
 class CoinData {
-  Future getCoinData(String currency) async {
+  Future getEthData(String currency) async {
+    String requestURL = '$coinAPIURL/ETH/$currency?apikey=$apiKey';
+
+    http.Response response = await http.get(Uri.parse(requestURL));
+
+    if (response.statusCode == 200) {
+      var decodedData = jsonDecode(response.body);
+
+      var lastPrice = decodedData['rate'];
+      print(lastPrice);
+
+      return lastPrice;
+    } else {
+      print(response.statusCode);
+
+      throw 'Problem with the get request';
+    }
+  }
+
+  Future getLightCoinData(String currency) async {
+    String requestURL = '$coinAPIURL/LTC/$currency?apikey=$apiKey';
+
+    http.Response response = await http.get(Uri.parse(requestURL));
+
+    if (response.statusCode == 200) {
+      var decodedData = jsonDecode(response.body);
+
+      var lastPrice = decodedData['rate'];
+      print(lastPrice);
+
+      return lastPrice;
+    } else {
+      print(response.statusCode);
+
+      throw 'Problem with the get request';
+    }
+  }
+
+  Future getBitCoinData(String currency) async {
     String requestURL = '$coinAPIURL/BTC/$currency?apikey=$apiKey';
 
     http.Response response = await http.get(Uri.parse(requestURL));
